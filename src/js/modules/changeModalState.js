@@ -1,0 +1,50 @@
+import { checkDigInputs } from "./checkDigInputs";
+
+function changeModalState(state) {
+    const windowForm = document.querySelectorAll('.balcon_icons_img'),
+        windowWidth = document.querySelectorAll('#width'),
+        windowHeight = document.querySelectorAll('#height'),
+        windowType = document.querySelectorAll('#view_type'),
+        windowProfile = document.querySelectorAll('.checkbox');
+
+    checkDigInputs('#width');
+    checkDigInputs('#height');
+
+    function bindActionToElems(event, elem, prop) {
+        elem.forEach((item, i) => {
+            item.addEventListener(event, () => {
+                switch (item.nodeName) {
+                    case 'SPAN':
+                        state[prop] = i;
+                        break;
+                    case 'INPUT':
+                        if (item.getAttribute('type') === 'checkbox') {
+                            i === 0 ? state[prop] = 'cold' : state[prop] = 'hot';
+                            elem.forEach((box, j) => {
+                                box.checked = false;
+                                if (j === i) {
+                                    box.checked = true;
+                                }
+                            });
+                        } else {
+                            state[prop] = item.value;
+                        }
+                        break;
+                    case 'SELECT':
+                        state[prop] = item.value;
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+    }
+
+    bindActionToElems('click', windowForm, 'form');
+    bindActionToElems('input', windowWidth, 'width');
+    bindActionToElems('input', windowHeight, 'height');
+    bindActionToElems('change', windowType, 'view type');
+    bindActionToElems('change', windowProfile, 'profile');
+}
+
+export { changeModalState };

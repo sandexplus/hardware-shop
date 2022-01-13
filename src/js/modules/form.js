@@ -1,15 +1,11 @@
-function form() {
+import { checkDigInputs } from './checkDigInputs';
+
+function form(modalState) {
     const form = document.querySelectorAll('form'),
-        input = document.querySelectorAll('input'),
-        phoneInput = document.querySelectorAll('input[name="user_phone"]');
+        input = document.querySelectorAll('input');
 
-    phoneInput.forEach(item => {
-        item.addEventListener('input', () => {
-            item.value = item.value.replace(/\D/, "");
-        });
-    });
+    checkDigInputs('input[name="user_phone"]');
 
-    console.log(form);
     const message = {
         loading: "Загрузка...",
         success: "Спасибо! Мы скоро с Вами свяжемся",
@@ -40,6 +36,12 @@ function form() {
             item.appendChild(statusMessage);
 
             const formData = new FormData(item);
+            if (item.getAttribute('data-calc') === 'end') {
+                for (let key in modalState) {
+                    formData.append(key, modalState[key]);
+                }
+            }
+
             postData('assets/server.php', formData)
                 .then(result => {
                     console.log(result);

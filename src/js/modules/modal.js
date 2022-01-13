@@ -28,7 +28,7 @@ const modal = () => {
 
             modal.classList.remove('show');
             document.body.classList.remove('modal-open');
-            // document.body.classList.remove('modal-open');
+
         });
 
         modal.addEventListener('click', (e) => {
