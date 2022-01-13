@@ -15605,13 +15605,18 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/slider.js");
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _modules_tab__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tab */ "./src/js/modules/tab.js");
+
 
 
 
 
 document.addEventListener('DOMContentLoaded', function () {
+  /* showModalByTime('.popup', 60000); */
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["modal"])('.popup_engineer_btn', '.popup_engineer', '.popup_close strong');
-  Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["modal"])('.phone_link', '.popup_engineer', '.popup_close strong');
+  Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["modal"])('.phone_link', '.popup', '.popup_close strong');
+  Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.glazing_block', '.glazing_slider', '.glazing_content', 'active');
+  Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.no_click', '.decoration_slider', '.decoration_content > div > div', 'after_click');
 });
 
 /***/ }),
@@ -15620,12 +15625,13 @@ document.addEventListener('DOMContentLoaded', function () {
 /*!*********************************!*\
   !*** ./src/js/modules/modal.js ***!
   \*********************************/
-/*! exports provided: modal */
+/*! exports provided: modal, showModalByTime */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "modal", function() { return modal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showModalByTime", function() { return showModalByTime; });
 /* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "./node_modules/core-js/modules/es.array.for-each.js");
 /* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
@@ -15643,20 +15649,90 @@ function modal(btnSelector, activeClass, closeClass) {
   popup.addEventListener('click', function (e) {
     e.preventDefault();
 
-    if (e.target.classList.contains(activeClass.slice(1)) && e.target.classList.contains('show')) {
+    if (e.target.classList.contains(activeClass.slice(1))) {
       popup.classList.remove('show');
+      document.body.classList.remove('modal-open');
     }
 
     if (e.target.tagName === close.tagName) {
       popup.classList.remove('show');
+      document.body.classList.remove('modal-open');
     }
   });
   btn.forEach(function (item) {
     item.addEventListener('click', function (e) {
       e.preventDefault();
-      console.log(e.target);
       popup.classList.add('show');
+      document.body.classList.add('modal-open');
     });
+  });
+}
+
+function showModalByTime(selector, timer) {
+  setTimeout(function () {
+    var popup = document.querySelector(selector);
+    popup.classList.add('show');
+    document.body.classList.add('modal-open');
+  }, timer);
+}
+
+
+
+/***/ }),
+
+/***/ "./src/js/modules/tab.js":
+/*!*******************************!*\
+  !*** ./src/js/modules/tab.js ***!
+  \*******************************/
+/*! exports provided: tab */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "tab", function() { return tab; });
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "./node_modules/core-js/modules/es.array.for-each.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
+/* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+function tab(tabSelector, parentSelector, contentSelector, activeClass) {
+  var tabs = document.querySelectorAll(tabSelector),
+      parent = document.querySelector(parentSelector),
+      content = document.querySelectorAll(contentSelector);
+
+  function hideTabContent() {
+    content.forEach(function (item) {
+      item.classList.add('hide');
+      item.classList.remove('show');
+    });
+    tabs.forEach(function (item) {
+      item.classList.remove(activeClass);
+    });
+  }
+
+  function showTabContent() {
+    var i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    content[i].classList.add('show');
+    content[i].classList.remove('hide');
+    tabs[i].classList.add(activeClass);
+  }
+
+  hideTabContent();
+  showTabContent();
+  parent.addEventListener('click', function (e) {
+    if (e.target.classList.contains(tabSelector.slice(1)) || e.target.parentNode.classList.contains(tabSelector.slice(1))) {
+      tabs.forEach(function (item, i) {
+        if (e.target === item || e.target.parentNode === item) {
+          hideTabContent();
+          showTabContent(i);
+        }
+      });
+    }
   });
 }
 

@@ -3,24 +3,36 @@ function modal(btnSelector, activeClass, closeClass) {
     const popup = document.querySelector(activeClass);
     const close = document.querySelector(closeClass);
 
+
+
     popup.addEventListener('click', (e) => {
         e.preventDefault();
-        if (e.target.classList.contains(activeClass.slice(1)) && e.target.classList.contains('show')) {
+        if (e.target.classList.contains(activeClass.slice(1))) {
             popup.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
         if (e.target.tagName === close.tagName) {
             popup.classList.remove('show');
+            document.body.classList.remove('modal-open');
         }
     });
 
     btn.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log(e.target);
             popup.classList.add('show');
+            document.body.classList.add('modal-open');
         });
     });
 
 }
 
-export { modal };
+function showModalByTime(selector, timer) {
+    setTimeout(() => {
+        const popup = document.querySelector(selector);
+        popup.classList.add('show');
+        document.body.classList.add('modal-open');
+    }, timer);
+}
+
+export { modal, showModalByTime };
