@@ -17965,6 +17965,7 @@ document.addEventListener('DOMContentLoaded', function () {
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_1__["modal"])();
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.glazing_block', '.glazing_slider', '.glazing_content', 'active');
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.no_click', '.decoration_slider', '.decoration_content > div > div', 'after_click');
+  Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.balcon_icons_img', '.balcon_icons', '.big_img > img', 'do_image_more');
   Object(_modules_form__WEBPACK_IMPORTED_MODULE_3__["form"])();
 });
 
@@ -18101,22 +18102,36 @@ __webpack_require__.r(__webpack_exports__);
 
 var modal = function modal() {
   function bindModal(triggerSelector, modalSelector, closeSelector) {
+    var closeClickOverlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
     var trigger = document.querySelectorAll(triggerSelector),
         modal = document.querySelector(modalSelector),
-        close = document.querySelector(closeSelector);
+        close = document.querySelector(closeSelector),
+        windows = document.querySelectorAll('[data-modal]');
     trigger.forEach(function (item) {
       item.addEventListener('click', function (e) {
         e.preventDefault();
+        windows.forEach(function (item) {
+          item.classList.remove('show');
+          document.body.classList.remove('modal-open');
+        });
         modal.classList.add('show');
         document.body.classList.add('modal-open');
       });
     });
     close.addEventListener('click', function () {
+      windows.forEach(function (item) {
+        item.classList.remove('show');
+        document.body.classList.remove('modal-open');
+      });
       modal.classList.remove('show');
       document.body.classList.remove('modal-open'); // document.body.classList.remove('modal-open');
     });
     modal.addEventListener('click', function (e) {
-      if (e.target === modal) {
+      if (e.target === modal && closeClickOverlay) {
+        windows.forEach(function (item) {
+          item.classList.remove('show');
+          document.body.classList.remove('modal-open');
+        });
         modal.classList.remove('show');
         document.body.classList.remove('modal-open');
       }
@@ -18132,7 +18147,9 @@ var modal = function modal() {
 
   bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
   bindModal('.phone_link', '.popup', '.popup .popup_close');
-  bindModal('.popup_calc_btn', '.popup_calc', '.popup_calc_close'); // showModalByTime('.popup', 60000);
+  bindModal('.popup_calc_btn', '.popup_calc', '.popup_calc_close');
+  bindModal('.popup_calc_button', '.popup_calc_profile', '.popup_calc_profile_close', false);
+  bindModal('.popup_calc_profile_button', '.popup_calc_end', '.popup_calc_end_close', false); // showModalByTime('.popup', 60000);
 };
 
 
