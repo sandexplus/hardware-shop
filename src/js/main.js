@@ -1,5 +1,9 @@
 'use strict';
 
 import './slider';
+import { modal } from './modules/modal';
 
-console.log(1);
+document.addEventListener('DOMContentLoaded', () => {
+    modal('.popup_engineer_btn', '.popup_engineer', '.popup_close strong');
+    modal('.phone_link', '.popup_engineer', '.popup_close strong');
+});
