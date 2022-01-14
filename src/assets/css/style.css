@@ -734,6 +734,8 @@ textarea:focus {
     background-color: #575757;
     border-radius: 7px;
     padding: 4px;
+    min-width: 60px;
+    display: block;
 }
 
 .description1 {

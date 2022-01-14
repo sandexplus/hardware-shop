@@ -2622,6 +2622,34 @@ $({ target: 'Array', proto: true, forced: !arrayMethodHasSpeciesSupport('slice')
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.date.to-string.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.date.to-string.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js/internals/redefine.js");
+
+var DatePrototype = Date.prototype;
+var INVALID_DATE = 'Invalid Date';
+var TO_STRING = 'toString';
+var nativeDateToString = DatePrototype[TO_STRING];
+var getTime = DatePrototype.getTime;
+
+// `Date.prototype.toString` method
+// https://tc39.github.io/ecma262/#sec-date.prototype.tostring
+if (new Date(NaN) + '' != INVALID_DATE) {
+  redefine(DatePrototype, TO_STRING, function toString() {
+    var value = getTime.call(this);
+    // eslint-disable-next-line no-self-compare
+    return value === value ? nativeDateToString.call(this) : INVALID_DATE;
+  });
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.object.to-string.js":
 /*!*************************************************************!*\
   !*** ./node_modules/core-js/modules/es.object.to-string.js ***!
@@ -17956,6 +17984,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_tab__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tab */ "./src/js/modules/tab.js");
 /* harmony import */ var _modules_form__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/form */ "./src/js/modules/form.js");
 /* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+/* harmony import */ var _modules_image__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/image */ "./src/js/modules/image.js");
+
+
 
 
 
@@ -17974,6 +18006,8 @@ document.addEventListener('DOMContentLoaded', function () {
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.no_click', '.decoration_slider', '.decoration_content > div > div', 'after_click');
   Object(_modules_tab__WEBPACK_IMPORTED_MODULE_2__["tab"])('.balcon_icons_img', '.balcon_icons', '.big_img > img', 'do_image_more');
   Object(_modules_form__WEBPACK_IMPORTED_MODULE_3__["form"])(modalState);
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["timer"])('#days', '#hours', '#minutes', '#seconds', '18 Dec 2022');
+  Object(_modules_image__WEBPACK_IMPORTED_MODULE_6__["image"])();
 });
 
 /***/ }),
@@ -18197,6 +18231,48 @@ function form(modalState) {
 
 /***/ }),
 
+/***/ "./src/js/modules/image.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/image.js ***!
+  \*********************************/
+/*! exports provided: image */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "image", function() { return image; });
+function image() {
+  var imgPopup = document.createElement('div'),
+      workSection = document.querySelector('.works'),
+      bigImage = document.createElement('img');
+  workSection.appendChild(imgPopup);
+  imgPopup.style.justifyContent = 'center';
+  imgPopup.style.alignItems = 'center';
+  imgPopup.style.display = 'none';
+  imgPopup.appendChild(bigImage);
+  workSection.addEventListener('click', function (e) {
+    e.preventDefault();
+
+    if (e.target && e.target.classList.contains('preview')) {
+      imgPopup.classList.add('popup');
+      imgPopup.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      var path = e.target.parentNode.getAttribute('href');
+      bigImage.setAttribute('src', path);
+    }
+
+    if (e.target && e.target.matches('div.popup')) {
+      imgPopup.style.display = 'none';
+      document.body.style.overflow = '';
+      imgPopup.classList.remove('popup');
+    }
+  });
+}
+
+
+
+/***/ }),
+
 /***/ "./src/js/modules/modal.js":
 /*!*********************************!*\
   !*** ./src/js/modules/modal.js ***!
@@ -18324,6 +18400,62 @@ function tab(tabSelector, parentSelector, contentSelector, activeClass) {
       });
     }
   });
+}
+
+
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/*! exports provided: timer */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "timer", function() { return timer; });
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function timer(daysSelector, hoursSelector, minutesSelector, secondsSelector, dateEnd) {
+  var days = document.querySelector(daysSelector),
+      hours = document.querySelector(hoursSelector),
+      minutes = document.querySelector(minutesSelector),
+      seconds = document.querySelector(secondsSelector);
+  dateEnd = Date.parse(dateEnd);
+  var timerId = setTimeout(function time() {
+    var dateNow = new Date();
+    dateNow = Date.parse(dateNow);
+    var dateRemain = +dateEnd - +dateNow,
+        tempDate = dateRemain;
+    days.innerText = checkZero(Math.floor(tempDate / (1000 * 60 * 60 * 24)));
+    tempDate -= days.innerText * 1000 * 60 * 60 * 24;
+    hours.innerText = checkZero(Math.floor(tempDate / (1000 * 60 * 60)));
+    tempDate -= hours.innerText * 1000 * 60 * 60;
+    minutes.innerText = checkZero(Math.floor(tempDate / (1000 * 60)));
+    tempDate -= minutes.innerText * 1000 * 60;
+    seconds.innerText = checkZero(Math.floor(tempDate / 1000));
+
+    if (dateRemain > 0) {
+      timerId = setTimeout(time, 1000);
+    }
+  }, 0);
+
+  function checkZero(num) {
+    if (num < 10) {
+      return "0".concat(num);
+    } else {
+      return num;
+    }
+  }
+
+  days.innerText = '00';
+  hours.innerText = '00';
+  minutes.innerText = '00';
+  seconds.innerText = '00';
 }
 
 
